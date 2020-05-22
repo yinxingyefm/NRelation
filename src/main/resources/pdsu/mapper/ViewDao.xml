@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="pdsu.dao.ViewDao" >
+  <select id="all" resultType="pdsu.domain.View">
+    select XGH ,XM,JRSJ,USERTYPE,LYBH,XQBH,FJBH,
+    LYMC,FJMC,LCMC FROM dbcenter.v_xgxt_bzb_yq_wgh_crdj_api
+  </select>
+    <select id="allRoom" resultType="java.lang.String">
+
+        select distinct FJBH  from  dbcenter.v_xgxt_bzb_yq_wgh_crdj_api
+        where  XGH=#{XGH}  and  JRSJ &gt;= #{begin} and JRSJ &lt;= #{end}
+    </select>
+    <select id="allXGH" resultType="java.lang.String">
+        select  XGH  from  dbcenter.v_xgxt_bzb_yq_wgh_crdj_api
+        where  FJBH=#{FJBH}  and  JRSJ &gt;= #{begin} and JRSJ &lt;= #{end} and XGH NOT IN
+        <foreach collection="list" item="id" index="index"
+                 open="(" close=")" separator=",">
+            ${id}
+        </foreach>
+
+    </select>
+    <select id="allbByNum" resultType="pdsu.domain.View">
+         select distinct XGH ,XM,JRSJ,USERTYPE,LYBH,FJBH,
+         LYMC,FJMC,LCMC,XQBH FROM dbcenter.v_xgxt_bzb_yq_wgh_crdj_api
+         where  XGH=#{XGH}
+    </select>
+    <select id="allDisRoom" resultType="java.lang.String">
+        select distinct FJBH  from  dbcenter.v_xgxt_bzb_yq_wgh_crdj_api
+        where  XGH=#{XGH} and  FJBH not in
+        <foreach collection="list" item="id" index="index"
+                 open="(" close=")" separator=",">
+            ${id}
+        </foreach>
+
+    </select>
+    <select id="allByXGH" resultType="pdsu.domain.View">
+         select XGH ,XM,JRSJ,USERTYPE,LYBH,XQBH,FJBH,
+         LYMC,FJMC,LCMC FROM dbcenter.v_xgxt_bzb_yq_wgh_crdj_api
+         where XGH=#{XGH}
+    </select>
+    <select id="allByXGHByKJ" resultType="java.util.Map">
+
+        select ly.lymc,ly.lyzb_x zbx,ly.lyzb_y zby,cr.jrsj jrsj,cr.cqsj cqsj
+        from dbcenter.v_xgxt_bzb_yq_wgh_crdj_api cr
+        left join dbcenter.v_xgxt_bzb_yq_wgh_crdj_api fj on cr.fjbh=fj.fjbh
+        left join dbcenter.v_xgxt_bzb_yq_wgh_crdj_api ly on fj.lybh=ly.lybh
+        where 1=1
+        <if test="xgh != null">
+            and cr.xgh = #{xgh}
+        </if>
+        <if test="kssj != null">
+            and cr.jrsj <![CDATA[ >= ]]> #{kssj}
+        </if>
+        <if test="jssj != null">
+            and cr.jrsj<![CDATA[ <= ]]> #{jssj}
+        </if>
+        order by cr.jrsj
+
+    </select>
+
+
+
+    <select id="allByXGHInfo" resultType="pdsu.domain.View">
+        select  XGH ,XM  from  dbcenter.v_xgxt_bzb_yq_wgh_crdj_api
+        where  FJBH=#{FJBH}  and  JRSJ &gt;= #{begin} and JRSJ &lt;= #{end} and XGH NOT IN
+        <foreach collection="list" item="id" index="index"
+                 open="(" close=")" separator=",">
+            ${id}
+        </foreach>
+
+    </select>
+    <select id="allNode" resultType="pdsu.domain.Node">
+
+
+
+
+    </select>
+    <select id="allByXGHInfoB" resultType="pdsu.domain.View">
+        select  XGH ,XM  from  dbcenter.v_xgxt_bzb_yq_wgh_crdj_api
+        where   JRSJ &gt;= #{begin} and JRSJ &lt;= #{end} and XGH NOT IN
+        <foreach collection="list" item="id" index="index"
+                 open="(" close=")" separator=",">
+            ${id}
+        </foreach>
+        and FJBH IN  <foreach collection="before" item="id" index="index"
+                              open="(" close=")" separator=",">
+        ${id}
+    </foreach>
+
+    </select>
+
+
+</mapper>
